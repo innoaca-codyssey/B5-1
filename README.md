@@ -101,3 +101,18 @@ TTL은 `(만료 시각, 세대 번호, 키)`를 최소 힙에 넣습니다. 루�
 LFU를 적용하려면 Entry마다 사용 횟수를 기록하고 횟수별 리스트와 최저 빈도를 관리해야 합니다. 같은 빈도 안에서는 최근 사용 순서를 적용할 수 있습니다.
 
 10만 건에서는 해시 확장 순간의 O(n) 복사, 전체 KEYS 출력, 만료 설정을 자주 바꿀 때 남는 힙 항목이 부담입니다. 키 출력을 스트리밍하거나 무효 힙 항목 비율에 따라 힙을 재구성할 수 있습니다. 실제 메모리 제한을 적용하려면 문자열 외에 노드, 버킷, 힙 공간도 계산해야 합니다. Python 버전과 구현에 따라 객체 크기가 달라지므로 같은 런타임과 측정 범위를 고정해야 비교가 가능합니다.
+
+## 引用符の修正.replace
+
+```bash
+$ { printf 'SET user "신 예준"\nTTL user\nEXPIRE user 2\nTTL user\n'; sleep 3; printf 'GET user\nTTL user\nDBSIZE\nquit\n'; } | python3 main.py
+mini-redis> OK
+mini-redis> (integer) -1
+mini-redis> (integer) 1
+mini-redis> (integer) 1
+mini-redis> (nil)
+mini-redis> (integer) -2
+mini-redis> (integer) 0
+mini-redis> ```
+
+先の入力でエスケープを重ねたためSETの引数数エラーになりました。大きい引用符をそのまま入力して2秒のTTLを設定し、3秒後に消えることを確認しました。
