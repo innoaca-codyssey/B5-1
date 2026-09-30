@@ -20,3 +20,23 @@ Python 3.14.7
 ```
 
 macOS arm64, Python 표준 라이브러리에서 실행합니다.
+
+## 자료구조와 만료 처리
+
+```bash
+$ python3 -m unittest discover -s tests -v
+test_expiration_before_dbsize_and_keys (testcache.CacheTests.test_expiration_before_dbsize_and_keys) ... ok
+test_lru_touch_eviction_and_oom_preserve_existing (testcache.CacheTests.test_lru_touch_eviction_and_oom_preserve_existing) ... ok
+test_ttl_overwrite_del_reuse_and_reschedule (testcache.CacheTests.test_ttl_overwrite_del_reuse_and_reschedule) ... ok
+test_unicode_bytes_quotes_and_invalid_commands (testcache.CacheTests.test_unicode_bytes_quotes_and_invalid_commands) ... ok
+test_hash_collision_resize_and_none (testcache.StructuresTests.test_hash_collision_resize_and_none) ... ok
+test_heap_and_dynamic_capacity (testcache.StructuresTests.test_heap_and_dynamic_capacity) ... ok
+test_list_singleton_and_move (testcache.StructuresTests.test_list_singleton_and_move) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.007s
+
+OK
+```
+
+해시 충돌과 1,000개 키 확장, 힙 순서, LRU 조회 갱신, OOM 시 기존 값 보존을 검사했습니다. TTL 재설정, 덮어쓰기, 삭제 후 같은 키 재사용에서 오래된 힙 항목이 새 값을 삭제하지 않는지도 확인합니다.
