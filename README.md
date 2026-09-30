@@ -40,3 +40,31 @@ OK
 ```
 
 해시 충돌과 1,000개 키 확장, 힙 순서, LRU 조회 갱신, OOM 시 기존 값 보존을 검사했습니다. TTL 재설정, 덮어쓰기, 삭제 후 같은 키 재사용에서 오래된 힙 항목이 새 값을 삭제하지 않는지도 확인합니다.
+
+## String 명령과 LRU
+
+```bash
+$ printf "CONFIG SET maxmemory 6\nSET a aa\nSET b bb\nGET a\nSET c cc\nGET b\nINFO memory\nKEYS\nEXISTS a\nDEL c\nDBSIZE\nEXPIRE a 0\nTTL a\nHELLO\nGET\nCONFIG SET maxmemory abc\nSET large toolong\nquit\n" | python3 main.py
+mini-redis> OK
+mini-redis> OK
+mini-redis> OK
+mini-redis> "aa"
+mini-redis> OK
+mini-redis> (nil)
+mini-redis> used_memory:6
+maxmemory:6
+evicted_keys:1
+mini-redis> 1. "a"
+2. "c"
+mini-redis> (integer) 1
+mini-redis> (integer) 1
+mini-redis> (integer) 1
+mini-redis> (integer) 1
+mini-redis> (integer) -2
+mini-redis> (error) ERR unknown command 'HELLO'
+mini-redis> (error) ERR wrong number of arguments for 'GET' command
+mini-redis> (error) ERR value is not an integer or out of range
+mini-redis> (error) OOM command not allowed when used_memory > 'maxmemory'
+mini-redis> ```
+
+GET a로 a를 가장 최근 위치로 옮긴 뒤 c를 저장하면 b가 제거됩니다. 단일 키와 값이 제한보다 크면 기존 데이터나 LRU를 바꾸지 않고 OOM을 반환합니다. 만료와 명시적 삭제는 evicted_keys에 포함하지 않습니다.
