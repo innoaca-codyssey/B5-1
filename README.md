@@ -165,3 +165,18 @@ mini-redis> (integer) 0
 mini-redis> ```
 
 SUBSCRIBE는 현재 CLI를 채널에 등록합니다. PUBLISH는 구독자 수를 반환하고 큐에 들어간 메시지는 CLI가 출력합니다. UNSUBSCRIBE로 구독을 해제합니다. 채널/큐는 String 키 개수와 used_memory 계산에 포함하지 않습니다.
+
+## 이진 트리와 BST
+
+```bash
+$ python3 -c 'from tree import TreeNode, BinaryTree, BST; t=BinaryTree(TreeNode("A",TreeNode("B",TreeNode("D"),TreeNode("E")),TreeNode("C"))); print("preorder:",*t.preorder()); print("inorder:",*t.inorder()); print("postorder:",*t.postorder()); print("levelorder:",*t.levelorder()); b=BST(); [b.insert(x) for x in [5,3,7,2,4,6,8]]; print("BST:",*b.inorder()); print("delete root:",b.delete(5)); print("after:",*b.inorder())'
+preorder: A B D E C
+inorder: D B E A C
+postorder: D E B C A
+levelorder: A B C D E
+BST: 2 3 4 5 6 7 8
+delete root: True
+after: 2 3 4 6 7 8
+```
+
+전위는 루트/왼쪽/오른쪽, 중위는 왼쪽/루트/오른쪽, 후위는 왼쪽/오른쪽/루트, 레벨 순회는 큐로 같은 깊이부터 방문합니다. 각 순회는 O(n)입니다. BST의 평균 삽입/검색/삭제는 O(log n), 편향되면 O(n)이며 두 자식 삭제에는 오른쪽 부분 트리의 최소값을 사용합니다. [스택/큐/덱 설명](STACK_QUEUE_DEQUE.md)에 구현과 사용처를 정리했습니다.
