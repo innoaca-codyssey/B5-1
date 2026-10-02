@@ -4,6 +4,7 @@ import time
 from hashmap import HashMap
 from linked import LinkedList
 from heap import MinHeap
+from pubsub import PubSub
 
 
 class Entry:
@@ -27,6 +28,7 @@ class Cache:
         self.clock = clock
         self.maxmemory = self.used_memory = self.evicted_keys = 0
         self.generation = 0
+        self.pubsub = PubSub()
 
     def _delete(self, key):
         entry = self.data.remove(key)
@@ -72,6 +74,10 @@ class Cache:
             expected = 4
         elif cmd == 'INFO':
             expected = 2
+        elif cmd in ('SUBSCRIBE', 'UNSUBSCRIBE'):
+            expected = 2
+        elif cmd == 'PUBLISH':
+            expected = 3
         if expected is None:
             return "(error) ERR unknown command '" + args[0] + "'"
         if len(args) != expected:
@@ -95,6 +101,14 @@ class Cache:
             self.used_memory += new.bytes()
             self._evict()
             return 'OK'
+        if cmd == 'SUBSCRIBE':
+            self.pubsub.subscribe(args[1], 'cli')
+            return f'1. "subscribe"\n2. "{args[1]}"\n3. (integer) {self.pubsub.subscriptions("cli")}'
+        if cmd == 'UNSUBSCRIBE':
+            self.pubsub.unsubscribe(args[1], 'cli')
+            return f'(integer) {self.pubsub.subscriptions("cli")}'
+        if cmd == 'PUBLISH':
+            return f'(integer) {self.pubsub.publish(args[1], args[2])}'
         if cmd == 'CONFIG':
             self.maxmemory = integer
             self._evict()

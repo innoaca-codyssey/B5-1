@@ -14,6 +14,8 @@ def main():
         result = cache.execute(command)
         if result:
             print(result)
+        for channel, message in cache.pubsub.drain('cli'):
+            print(f'1. "message"\n2. "{channel}"\n3. "{message}"')
 
 
 if __name__ == '__main__':

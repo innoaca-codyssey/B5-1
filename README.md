@@ -116,3 +116,29 @@ mini-redis> (integer) 0
 mini-redis> ```
 
 앞선 명령은 인용부호를 중복 이스케이프해 SET의 인자 개수 오류가 발생했습니다. 큰따옴표를 그대로 전달하는 명령으로 수정해 2초 TTL을 설정하고, 3초 후 만료를 확인했습니다.
+
+## 트리와 메시지 큐 검증
+
+```bash
+$ python3 -m unittest discover -s tests -v
+test_binary_tree_four_traversals (testbonus.BonusTests.test_binary_tree_four_traversals) ... ok
+test_bst_leaf_single_child_two_children_and_root (testbonus.BonusTests.test_bst_leaf_single_child_two_children_and_root) ... ok
+test_bst_skew_no_recursion_failure (testbonus.BonusTests.test_bst_skew_no_recursion_failure) ... ok
+test_pubsub_cli_separate_from_key_memory (testbonus.BonusTests.test_pubsub_cli_separate_from_key_memory) ... ok
+test_pubsub_fanout_fifo_duplicates_and_unsubscribe (testbonus.BonusTests.test_pubsub_fanout_fifo_duplicates_and_unsubscribe) ... ok
+test_stack_queue_deque_empty_and_order (testbonus.BonusTests.test_stack_queue_deque_empty_and_order) ... ok
+test_expiration_before_dbsize_and_keys (testcache.CacheTests.test_expiration_before_dbsize_and_keys) ... ok
+test_lru_touch_eviction_and_oom_preserve_existing (testcache.CacheTests.test_lru_touch_eviction_and_oom_preserve_existing) ... ok
+test_ttl_overwrite_del_reuse_and_reschedule (testcache.CacheTests.test_ttl_overwrite_del_reuse_and_reschedule) ... ok
+test_unicode_bytes_quotes_and_invalid_commands (testcache.CacheTests.test_unicode_bytes_quotes_and_invalid_commands) ... ok
+test_hash_collision_resize_and_none (testcache.StructuresTests.test_hash_collision_resize_and_none) ... ok
+test_heap_and_dynamic_capacity (testcache.StructuresTests.test_heap_and_dynamic_capacity) ... ok
+test_list_singleton_and_move (testcache.StructuresTests.test_list_singleton_and_move) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.047s
+
+OK
+```
+
+스택/큐/덱의 순서, 네 순회, BST 삭제의 자식 개수별 경우와 깊은 편향 트리, 구독 중복과 FIFO/다중 전달을 검사했습니다. String 저장소의 LRU/TTL 기존 검사도 함께 통과했습니다.
