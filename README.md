@@ -142,3 +142,26 @@ OK
 ```
 
 스택/큐/덱의 순서, 네 순회, BST 삭제의 자식 개수별 경우와 깊은 편향 트리, 구독 중복과 FIFO/다중 전달을 검사했습니다. String 저장소의 LRU/TTL 기존 검사도 함께 통과했습니다.
+
+## 채널 발행과 구독
+
+```bash
+$ printf "PUBLISH news before\nSUBSCRIBE news\nPUBLISH news first\nPUBLISH news second\nUNSUBSCRIBE news\nPUBLISH news after\nDBSIZE\nquit\n" | python3 main.py
+mini-redis> (integer) 0
+mini-redis> 1. "subscribe"
+2. "news"
+3. (integer) 1
+mini-redis> (integer) 1
+1. "message"
+2. "news"
+3. "first"
+mini-redis> (integer) 1
+1. "message"
+2. "news"
+3. "second"
+mini-redis> (integer) 0
+mini-redis> (integer) 0
+mini-redis> (integer) 0
+mini-redis> ```
+
+SUBSCRIBE는 현재 CLI를 채널에 등록합니다. PUBLISH는 구독자 수를 반환하고 큐에 들어간 메시지는 CLI가 출력합니다. UNSUBSCRIBE로 구독을 해제합니다. 채널/큐는 String 키 개수와 used_memory 계산에 포함하지 않습니다.
